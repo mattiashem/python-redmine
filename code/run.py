@@ -4,7 +4,7 @@ from flask import Flask
 app = Flask(__name__)
 
 
-redmine = Redmine('https://redmine.fareoffice.com', key='7266ff4dc355a2bfe85e4e371406025edc189d58')
+redmine = Redmine('https://redmine.fareoffice.com', key='KEY')
 project = redmine.project.get('releases')
 print(project.identifier)
 
