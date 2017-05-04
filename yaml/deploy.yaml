@@ -1,0 +1,66 @@
+---
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  name: "redmine-client"
+  service: redminec
+spec:
+  replicas: "1"
+  selector:
+    name: "redminec"
+  strategy:
+    type: "Rolling"
+  template:
+    metadata:
+      labels:
+        name: "redminec"
+        service: redminec
+    spec:
+      containers:
+      - env:                                 
+        - name: REDMINE_KEY
+          value: ${REDMINE_KEY}
+          name: "redmine-client"
+          image: "fareoffice/redmine-client:latest"
+          imagePullPolicy: Always
+          ports:
+            -
+              name: "redminec"
+              containerPort: "5000"
+              protocol: "TCP"
+          livenessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 300
+            timeoutSeconds: 10
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "redmine-client"
+  service: redminec
+spec:
+  selector:
+    name: "redminec"
+  ports:
+  -
+     name: redmine-client
+     port: 5000
+     targetPort: redmine-client
+     protocol: TCP
+
+
+
+---
+apiVersion: v1
+kind: Route
+metadata:
+  name: route-redminec
+  service: redminec
+spec:
+  host: ${URL}
+  to:
+    kind: Service
+    name: redminec
